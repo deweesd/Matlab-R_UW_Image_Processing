@@ -1,2 +1,0 @@
-%% Call function %%
-[R1_global_thresh, R1_global_thresh_1, R1_global_thresh_2, R2_global_thresh, R2_global_thresh_1, R2_global_thresh_2, yplot1, yplot2, S, S_1] = TIC_Global_thresh_troublshoot_doppler(timeStamps, R1_Doppler);
