@@ -7,7 +7,7 @@ All algorithms used for image processing was generated via Matlab 2018a which co
 
 ## TIC_Analysis folder info:
 
-This folder consists of output figures that help illustrate how each Time Intensity Curve (TIC) parameter is extracted. Please reference the 'TIC_Features.png' file as well as the 'Arrival_Time_ex.png' file to see how each threshold is set and each feature is extracted to generate the parametric maps found in the folder ''Heatmap_Dictionary''.
+This folder consists of output figures that help illustrate how each Time Intensity Curve (TIC) parameter is extracted. Please reference the 'TIC_Features.png' file as well as the 'Arrival_Time_ex.png' file to see how each threshold is set and each feature is extracted to generate the parametric maps found in the folder ''Heatmap_dictionary''. The heatmap dictionary shows the differnce between two injury severity types at three distinct time points of either before, immediately after, or 10-weeks post injury.
 
 
 ## Scripts folder info:
