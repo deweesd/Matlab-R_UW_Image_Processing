@@ -1,0 +1,119 @@
+---
+title: "Predictive Model"
+author: "Dane Dewees"
+date: "11/1/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE}
+#Color Format - `r colFmt("green TEXT",'green')`
+library(knitr)
+colFmt = function(x,color){
+  outputFormat = opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+## Regression Analysis: Model Predictions and Confidence Intervals
+
+The main goal of linear regression is to *predict* an outcome value on the basis of one or multiple predictor variables (in this case, BBB or Injury).
+
+## Summarize Data
+
+```{r echo=FALSE, include=FALSE}
+getwd()
+setwd('/Users/Deweesd/Desktop/ANOVA_MODEL/')
+getwd()
+
+#install.packages("tidyverse")
+
+library(tidyverse)
+```
+
+
+```{r echo=FALSE}
+## Read in files ##
+data_frame <- read.csv("./Acute_Chronic_spreadsheet.csv")
+summary(data_frame)
+```
+
+
+## Build linear regression
+
+```{r echo=FALSE}
+## Building multivariate linear regression model ##
+
+model <- lm(Time.Delay ~ BBB, data = data_frame)
+model
+```
+
+The linear model equation can be written as follows: Time Delay = 1.49575 + -0.05155*BBB (discrepancy on units of measurement (other than seconds))
+
+
+## Generating new data set for predictive model
+
+```{r echo=FALSE}
+new.BBB <- data.frame(BBB = c(6, 14, 19)
+)
+new.BBB
+predict(model, newdata = new.BBB)
+```
+
+## Confidence Interval
+
+The confidence interval reflects the uncertainty around the mean predictions. To display the 95% CI around the mean of predictive values, specify "confidence"
+
+```{r echo=FALSE}
+# predict corresponding time delay given BBB
+predict(model, newdata = new.BBB, interval = "confidence")
+```
+
+The output contains the following columns:
+
+    fit: the predicted Time Delay (sec) values for the three new BBB scores
+    lwr and upr: the lower and the upper confidence limits for the expected values, respectively. By default the function produces the 95% confidence limits.
+
+For example, the 95% confidence interval associated with a BBB score of 14 is (0.6710,0.8883). This means that, according to our model, an animal with a BBB score of 14 has, on average, a maximum arrival time delay ranging between 0.67 and 0.888 seconds.
+
+
+## Prediction Interval
+
+The prediction interval gives uncertainty around a single value. In the same way, as the confidence intervals, the prediction intervals can be computed as follows:
+
+```{r echo=FALSE}
+## Prediction Interval ##
+
+pred.int <- predict(model, newdata = new.BBB, interval = "prediction")
+pred.int
+```
+The 95% prediction intervals associated with a BBB score of 14 is (0.3664, 1.19). This means that, according to our model, 95% of the animals with a BBB of 14 have a maximuum arrival time delay between 0.3664 and 1.19 seconds. **Note that the prediction intervals relies strongly on the assumption that the residual erros are normally distributed with a constant variance**. 
+
+## Visualize Predictive Model
+
+The plot below shows the true data point, and both the CI and predicitve intervals. The regression line is in blue, the confidence band is in gray, and the prediction band is in red. This shows that within that upr and lwr bounds for PI, BBB score follows the trend of the adjusted regression. 
+
+```{r, warning=FALSE}
+# 0. Build linear model 
+model <- lm(Time.Delay ~ BBB, data = data_frame)
+# 1. Add predictions 
+pred.int <- predict(model, interval = "prediction")
+df <- cbind(data_frame, pred.int)
+# 2. Regression line + confidence intervals
+library("ggplot2")
+p <- ggplot(df, aes(BBB, Time.Delay)) +
+  geom_point() +
+  stat_smooth(method = lm) +
+   labs(x="BBB Score", y="Time Delay (sec)")
+# 3. Add prediction intervals
+p + geom_line(aes(y = lwr), color = "red", linetype = "dashed")+
+  geom_line(aes(y = upr), color = "red", linetype = "dashed")
+```
